@@ -1,0 +1,5 @@
+__pycahe__
+.venv
+*.pyc
+src/__pycache__
+src/books/__pycache__
