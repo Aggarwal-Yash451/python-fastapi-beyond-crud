@@ -3,3 +3,4 @@ __pycahe__
 *.pyc
 src/__pycache__
 src/books/__pycache__
+src/db/__pycache__
