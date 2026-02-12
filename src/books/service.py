@@ -2,6 +2,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from src.books.models import BookCreateModel, BookUpdateModel
 from sqlmodel import select, desc
 from src.books.db_models import Book
+from datetime import datetime
 
 
 class BookService:
@@ -22,6 +23,7 @@ class BookService:
         book_data_dict = book_data.model_dump()
 
         new_book = Book(**book_data_dict)
+
 
         session.add(new_book)
         await session.commit()

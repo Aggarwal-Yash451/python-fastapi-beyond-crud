@@ -5,3 +5,4 @@ src/__pycache__
 src/books/__pycache__
 src/db/__pycache__
 .env
+src/auth/__pycache__
