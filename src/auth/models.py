@@ -18,6 +18,7 @@ class User(SQLModel, table=True):
     updated_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
     is_verified: bool = Field(default=False)
     password_hash: str = Field(exclude=True)
+    role: str = Field(sa_column=Column(pg.VARCHAR, nullable=False, server_default="user"))
 
 
     def __repr__(self):
