@@ -9,7 +9,7 @@ from fastapi import status
 from src.db.redis import token_in_blocklist
 from src.db.main import get_session
 from typing import List
-from src.auth.models import User
+from src.db.models import User
 
 user_service = UserService()
 

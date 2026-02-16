@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
-from src.auth.schemas import UserCreateModel, UserLoginModel
+from src.auth.schemas import UserCreateModel, UserLoginModel, UserBookModel
 from src.auth.service import UserService
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.db.main import get_session
 from src.auth.schemas import UserModel
-from src.auth.utils import create_access_token, decode_token, verify_pwd
+from src.auth.utils import create_access_token, verify_pwd
 from datetime import timedelta, datetime
 from fastapi.responses import JSONResponse
 from src.auth.dependencies import RefreshTokenBearer, AccessTokenBearer
@@ -92,7 +92,7 @@ async def refresh_token(token_details: dict = Depends(RefreshTokenBearer())):
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid")
 
 
-@auth_router.get("/me")
+@auth_router.get("/me", response_model=UserBookModel)
 async def get_current_user(
     user=Depends(get_curr_user), _: bool = Depends(role_checker)
 ):
