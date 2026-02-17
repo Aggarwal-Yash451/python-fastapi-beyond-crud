@@ -13,6 +13,7 @@ from src.db.models import User
 
 user_service = UserService()
 
+
 class TokenBearer(HTTPBearer):
     def __init__(self, auto_error=True):
         super().__init__(auto_error=auto_error)
@@ -75,8 +76,12 @@ class RefreshTokenBearer(TokenBearer):
                 detail="Please provide an refresh token",
             )
 
-async def get_curr_user(token_details: dict = Depends(AccessTokenBearer()), session: AsyncSession = Depends(get_session)):
-    user_email = token_details['user']['email']
+
+async def get_curr_user(
+    token_details: dict = Depends(AccessTokenBearer()),
+    session: AsyncSession = Depends(get_session),
+):
+    user_email = token_details["user"]["email"]
 
     user = await user_service.get_user_by_email(user_email, session)
 
@@ -84,15 +89,19 @@ async def get_curr_user(token_details: dict = Depends(AccessTokenBearer()), sess
 
 
 class RoleChecker:
-    def __init__(self, allowed_roles: List[str])->None:
+    def __init__(self, allowed_roles: List[str]) -> None:
         self.allowed_roles = allowed_roles
 
-    
     async def __call__(self, current_user: User = Depends(get_curr_user)):
+        if not current_user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"message": "Account not verified"},
+            )
+
         if current_user.role in self.allowed_roles:
             return True
-        
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Operation not permitted")
-        
-        
-    
+
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Operation not permitted"
+        )

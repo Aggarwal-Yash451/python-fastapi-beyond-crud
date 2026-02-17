@@ -6,7 +6,6 @@ from src.db.main import get_session
 from src.reviews.service import ReviewService
 from src.auth.dependencies import get_curr_user
 from src.auth.dependencies import RoleChecker
-from src.db.models import Review
 
 admin_role_checker = RoleChecker(["admin"])
 user_role_checker = RoleChecker(["user", "admin"])
@@ -61,4 +60,4 @@ async def get_review(review_id: str, session: AsyncSession = Depends(get_session
 @review_router.delete("/{review_id}")
 async def delete_review(review_id: str, session: AsyncSession = Depends(get_session), check_role = Depends(user_role_checker)):
     await review_service.delete_review(review_id, session)
-    return "Book deletion success"
+    return "Review deletion success"
