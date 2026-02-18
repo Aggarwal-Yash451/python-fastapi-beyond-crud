@@ -20,6 +20,7 @@ from src.auth.dependencies import get_curr_user, RoleChecker
 from src.auth.schemas import EmailModel
 from src.mail import create_message, mail
 from src.config import Config
+from src.celery_tasks import send_email
 
 auth_router = APIRouter()
 user_service = UserService()
@@ -32,11 +33,8 @@ REFRESH_TOKEN_EXPIRY = 2
 async def send_mail(emails: EmailModel):
     emails = emails.addresses
     html = "<h1>Welcome to the app</h1>"
-
-    message = create_message(recipients=emails, subject="Welcome", body=html)
-
-    await mail.send_message(message)
-
+    subject = "Welcome email"
+    send_email.delay(emails, subject, html)
     return {"message": "Email sent success"}
 
 
@@ -63,12 +61,11 @@ async def create_user_account(
     <h1>Verify your Email</h1>
     <p>Please click this <a href="{link}">  link </a> to verify your email</p>
 """
+    emails = [email]
+    subject = "Email verification"
+    
+    send_email.delay(emails, subject, html_message)
 
-    message = create_message(
-        recipients=[email], subject="Email verification", body=html_message
-    )
-
-    bg_tasks.add_task(mail.send_message, message)
 
     return {
         "message": "Account created. Check your email for verification!!",
